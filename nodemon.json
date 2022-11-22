@@ -1,4 +1,7 @@
 {
     "restart":"rs", 
-    "delay":3000
+    "delay":3000, 
+    "ignore":[
+        "db/*"
+    ]
 }

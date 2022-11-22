@@ -6,6 +6,7 @@ const routes = express.Router();
 const log = console.log;
 const fs = require("fs");
 const password_hasher = require("../utils/password_hasher");
+const db = require("../db");
 
 
 function checkIfHasToken(req, res, next) {
@@ -19,7 +20,7 @@ function checkIfHasToken(req, res, next) {
     }
 
 
-    if (!req.cookies.auth_token && req.originalUrl !== "/login") {
+    if (!req.cookies.auth_token && req.originalUrl !== "/login" && req.originalUrl !== "/signup") {
         return res.redirect("/login"); 
     }
 
@@ -37,17 +38,10 @@ function verifyAuthToken(req, res, next) {
                 return res.clearCookie('auth_token').redirect("/");
             }
             if (payload) {
-                req.username = payload.username;
+                req.uid = payload.uid;
                 next();
             }
         });
-    }
-    next();
-}
-
-function authLogin(req, res, next) {
-    if (req.cookies.auth_token) {
-        return res.redirect("/");
     }
     next();
 }

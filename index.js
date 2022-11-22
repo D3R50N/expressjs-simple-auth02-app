@@ -3,13 +3,15 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./config/app.config");
-const authMiddleware = require("./middlewares/auth.middleware");
 const reqFlash = require("req-flash");
 const session = require("express-session");
 
-const log = console.log;
 const app = express();
+const log = console.log;
 
+//Middlewares
+const authMiddleware = require("./middlewares/auth.middleware");
+const auth_utils = require('./utils/auth_utils');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,14 +33,16 @@ console.clear();
 app.listen(config.port, () => console.log(`Server is running http://localhost:${config.port}.`));
 
 
+
 app.use(express.static('public'));
 
 
 app.use("/login", require("./routers/login.router"));
+app.use("/signup", require("./routers/signup.router"));
 
 app.get("/",[authMiddleware], (req, res, next) => {
     res.render("index.ejs", {
-        username: req.username,
+        user: auth_utils.findUser(req.uid),
     });
 });
 

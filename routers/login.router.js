@@ -6,9 +6,11 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/app.config");
 const authmiddleware = require("../middlewares/auth.middleware");
 
+
 routes.get("/", [authmiddleware], (req, res, next) => {
     if (req.username) return res.redirect('/');
-    res.render("login.ejs");
+    // cookies.last_error
+    res.render("login.ejs", { last_error: req.flash("last_error")});
     next();
 }); 
 
@@ -37,6 +39,7 @@ routes.post("/", (req, res, next) => {
             );
             res.redirect("/");
         } else {
+            req.flash("last_error", "Invalid password");
             res.redirect("/login");
         }
     });
